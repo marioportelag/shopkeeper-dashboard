@@ -1,0 +1,39 @@
+# Local development stack: PostgreSQL with schema + sample data, and the dashboard.
+# Reads DB_NAME, DB_USER, DB_PASSWORD and PORT from .env (see .env.example).
+name: shopkeeper-dashboard
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-shopkeeper}
+      POSTGRES_USER: ${DB_USER:-shopkeeper}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # Not published to the host: only the app container can reach it.
+
+  app:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: '5432'
+      DB_NAME: ${DB_NAME:-shopkeeper}
+      DB_USER: ${DB_USER:-shopkeeper}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      DB_SSL: 'false'
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

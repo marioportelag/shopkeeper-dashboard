@@ -1,13 +1,17 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShopKeeper Dashboard</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  {{{body}}}
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{#if title}}{{title}} · {{/if}}ShopKeeper Dashboard</title>
+    <link rel="stylesheet" href="/vendor/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/vendor/chart.umd.min.js" defer></script>
+    <script src="/vendor/dataTables.min.js" defer></script>
+    <script src="/js/dashboard.js" defer></script>
+  </head>
+  <body>
+    <main class="container">
+      {{{body}}}
+    </main>
+  </body>
 </html>

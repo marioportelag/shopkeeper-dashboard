@@ -1,123 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShopKeeper Dashboard</title>
+<header class="page-header">
+  <h1>ShopKeeper Dashboard</h1>
+  <p class="subtitle">Monthly listings per broker · {{range.label}}</p>
+</header>
 
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+<form class="range-form" method="get" action="/">
+  <label>From <input type="month" name="from" value="{{range.from}}" required /></label>
+  <label>To <input type="month" name="to" value="{{range.to}}" required /></label>
+  <button type="submit">Apply</button>
+</form>
 
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid black;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    tbody tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-  </style>
-</head>
-<body>
+<section class="card" aria-label="Listings per month">
+  <canvas id="listing-chart" role="img" aria-label="Line chart of monthly listings per broker"></canvas>
+</section>
 
-<h1>ShopKeeper Dashboard</h1>
+<section class="card">
+  {{#if tableRows.length}}
+    <table id="broker-table" class="display">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Broker</th>
+          <th>Site ID</th>
+          <th>Total listings</th>
+          <th>Average revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each tableRows}}
+          <tr>
+            <td data-order="{{month}}">{{monthLabel}}</td>
+            <td>{{broker}}</td>
+            <td>{{siteId}}</td>
+            <td>{{totalListings}}</td>
+            <td>{{avgRevenue}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <p class="empty-state">No listings were found for this period.</p>
+  {{/if}}
+</section>
 
-<!-- Gráfico -->
-<canvas id="listingChart" width="400" height="200"></canvas>
-
-<!-- Tabla -->
-<table id="brokerTable" class="display">
-  <thead>
-    <tr>
-      <th>Listing Id</th>
-      <th>Broker</th>
-      <th>Month</th>
-      <th>Total Listings</th>
-      <th>Average Revenue</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each listings}}
-    <tr>
-      <td>{{listing_id}}</td>
-      <td>{{broker}}</td>
-      <td>{{listing_month}}</td>
-      <td>{{total_listings}}</td>
-      <td>{{avg_revenue}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const labels = {{{json months}}};
-  const data = {{{json datasets}}};
-
-  console.log(labels);
-  console.log(data);
-
-  const ctx = document.getElementById('listingChart').getContext('2d');
-  const listingChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: data
-    },
-    options: {
-        scales: {
-        y: {
-            beginAtZero: true,
-            title: {
-            display: true,
-            text: 'Total Listings'
-            }
-        },
-        x: {
-            title: {
-            display: true,
-            text: 'Months'
-            }
-        }
-        }
-    }
-  });
-
-  $(document).ready(function() {
-    $('#brokerTable').DataTable({
-      paging: true,        
-      searching: true,    
-      ordering: true,     
-      info: true,         
-      lengthMenu: [5, 10, 25, 50, 100],
-      order: [[1, 'asc']],  
-      language: {
-        search: "Search:",
-        lengthMenu: "Show _MENU_ records by page",
-        info: "Showing page _PAGE_ of _PAGES_",
-        infoEmpty: "Records not available",
-        infoFiltered: "(Filtering _MAX_ of the total)",
-        paginate: {
-          previous: "Previous",
-          next: "Next"
-        }
-      }
-    });
-  });
-</script>
-
-</body>
-</html>
+{{! Data only: type="application/json" is never executed, and jsonScript escapes < > & so values cannot close the element. }}
+<script type="application/json" id="chart-data">{{jsonScript chart}}</script>
