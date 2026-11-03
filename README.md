@@ -7,18 +7,42 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%20%7C%2017-111827?style=flat-square&logo=postgresql&logoColor=4169E1)
 ![Express](https://img.shields.io/badge/Express-5-111827?style=flat-square&logo=express&logoColor=white)
 
-This is a historical portfolio project, originally a short exercise from 2024, kept intentionally small. It
-has since been revised to fix a cross-site scripting vulnerability, incorrect month aggregation and insecure
-database TLS settings. It now has automated tests, CI and a one-command local environment.
+A small personal project, kept intentionally simple. It started in 2024 as a short exercise; see
+[Project status](#project-status) for its history and [ROADMAP.md](ROADMAP.md) for what comes next.
 
 ---
 
 ## What it does
 
+ShopKeeper Dashboard is a server-rendered web page that aggregates business listings ("deals") published
+by broker sites, by site and by month, and shows the result as a line chart and a table.
+
 - Aggregates `deals` per broker site and **calendar month (year and month)**: listing count and average revenue.
 - Renders a line chart (Chart.js) and a sortable, searchable table (DataTables) for a selectable period. The
   default period is Nov 2020 – Nov 2021.
 - Validates the requested period (`?from=YYYY-MM&to=YYYY-MM`) and queries PostgreSQL with bind parameters only.
+
+## Who it's for
+
+It is designed for a small business brokerage, or an analyst working with one, who keeps listings in
+PostgreSQL and wants a quick view of monthly trends: how many listings each broker site published and their
+average revenue, month by month. It is a demonstration project; it has no production deployment and no
+known users.
+
+## Project status
+
+- **Origin.** The project started in 2024 as a take-home technical exercise for a hiring process. Since then
+  I have maintained it on my own, as a personal project.
+- **Data.** All data in this repository is fictional and generated: the seed in `db/seed.sql` and the test
+  fixtures. No data supplied during the original exercise is included in the repository or its history.
+- **2026 revision.** In 2026 the project was revised: security fixes (XSS, database TLS), correct monthly
+  aggregation, automated tests, CI and a Docker setup. That revision was done with AI assistance
+  ([Claude Code](https://claude.com/claude-code)) and integrated into `main` through a squash merge. The
+  individual commits remain visible on the
+  [`portfolio/shopkeeper-dashboard-hardening`](https://github.com/marioportelag/shopkeeper-dashboard/tree/portfolio/shopkeeper-dashboard-hardening)
+  branch.
+- **Next.** Planned work, with estimates, is in [ROADMAP.md](ROADMAP.md) and tracked in
+  [GitHub issues](https://github.com/marioportelag/shopkeeper-dashboard/issues).
 
 ## Tech stack
 
@@ -195,6 +219,12 @@ Dependabot proposes weekly dependency, Actions and base-image updates.
 - **Single page.** No pagination or caching on the server side. The query is bounded by a validated period of
   at most 120 months.
 - **Logging** uses the console rather than structured logs.
+
+## Roadmap and contributing
+
+- [ROADMAP.md](ROADMAP.md) lists the planned milestones, with an estimate and a definition of done per item.
+- Each roadmap item has a matching [GitHub issue](https://github.com/marioportelag/shopkeeper-dashboard/issues).
+- [CONTRIBUTING.md](CONTRIBUTING.md) explains how to run the project and the tests, and the commit style.
 
 ## License
 
